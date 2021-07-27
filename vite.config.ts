@@ -16,7 +16,16 @@ import LinkAttributes from 'markdown-it-link-attributes'
 
 const markdownWrapperClasses = 'prose prose-sm m-auto text-left'
 
-const useRandom = `${Math.random()}-${new Date().toISOString()}`
+let routesHash: string | undefined
+const getOrBuildHash = () => {
+  if (!routesHash) {
+    const useRandom = `${Math.random()}-${new Date().toISOString()}`
+    const cHash = crypto.createHash('MD5')
+    cHash.update(useRandom, 'utf-8')
+    routesHash = cHash.digest('hex')
+  }
+  return routesHash
+}
 
 const additionalManifestEntries: any[] = []
 
@@ -36,11 +45,9 @@ export default defineConfig({
       extendRoute(route) {
         const path = route.path
         if (!path.includes(':') && !path.includes('*') && path !== '/') {
-          const cHash = crypto.createHash('MD5')
-          cHash.update(useRandom, 'utf-8')
           additionalManifestEntries.push({
             url: path.startsWith('/') ? path.substring(1) : path,
-            revision: `${cHash.digest('hex')}`,
+            revision: `${getOrBuildHash()}`,
           })
         }
 
