@@ -1,4 +1,5 @@
 import path from 'path'
+import crypto from 'crypto'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
@@ -15,6 +16,12 @@ import LinkAttributes from 'markdown-it-link-attributes'
 
 const markdownWrapperClasses = 'prose prose-sm m-auto text-left'
 
+const useRandom = `${Math.random()}-${new Date().toISOString()}`
+
+const additionalManifestEntries: any[] = []
+
+// const proxy = new Proxy(manifestRoutes, {})
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -28,6 +35,19 @@ export default defineConfig({
 
     // https://github.com/hannoeru/vite-plugin-pages
     Pages({
+      extendRoute(route) {
+        const path = route.path
+        if (!path.includes(':') && !path.includes('*') && path !== '/') {
+          const cHash = crypto.createHash('MD5')
+          cHash.update(useRandom, 'utf-8')
+          additionalManifestEntries.push({
+            url: path.startsWith('/') ? path.substring(1) : path,
+            revision: `${cHash.digest('hex')}`,
+          })
+        }
+
+        return route
+      },
       extensions: ['vue', 'md'],
     }),
 
@@ -106,6 +126,9 @@ export default defineConfig({
             purpose: 'any maskable',
           },
         ],
+      },
+      workbox: {
+        additionalManifestEntries,
       },
     }),
 
