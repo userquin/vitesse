@@ -20,8 +20,6 @@ const useRandom = `${Math.random()}-${new Date().toISOString()}`
 
 const additionalManifestEntries: any[] = []
 
-// const proxy = new Proxy(manifestRoutes, {})
-
 export default defineConfig({
   resolve: {
     alias: {
