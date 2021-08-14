@@ -9,15 +9,19 @@ const router = useRouter()
 const { t } = useI18n()
 const title = useTitle()
 
+const wTitle = computed(() => {
+  return typeof window !== 'undefined' ? t('intro.hi', { name: props.name }) : 'Hi'
+})
+
 useHead({
-  title: `Hi ${props.name}`,
+  title: wTitle,
   meta: [
-    { name: 'og:title', description: `Hi ${props.name}` },
+    { name: 'og:title', description: wTitle },
   ],
 })
 
-watch(() => props.name, (name) => {
-  title.value = `Hi ${name || ''}`
+watch(wTitle, (t) => {
+  title.value = wTitle
 }, { immediate: true })
 </script>
 
@@ -27,7 +31,7 @@ watch(() => props.name, (name) => {
       <carbon-pedestrian class="inline-block" />
     </p>
     <p>
-      {{ t('intro.hi', { name: props.name }) }}
+      {{ wTitle }}
     </p>
     <p class="text-sm opacity-50">
       <em>{{ t('intro.dynamic-route') }}</em>
