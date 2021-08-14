@@ -7,8 +7,6 @@ const server = require('https-localhost')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const express = require('express')
 
-process.chdir('./dist')
-
 const app = server()
 
 app.serve = function(staticPath = 'dist') {
