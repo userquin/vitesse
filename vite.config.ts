@@ -30,6 +30,10 @@ const getOrBuildHash = () => {
 const additionalManifestEntries: any[] = []
 
 export default defineConfig({
+  build: {
+    manifest: !process.env.VITE_SSG,
+    ssrManifest: true,
+  },
   resolve: {
     alias: {
       '~/': `${path.resolve(__dirname, 'src')}/`,
@@ -42,15 +46,16 @@ export default defineConfig({
 
     // https://github.com/hannoeru/vite-plugin-pages
     Pages({
+      nuxtStyle: true,
       extendRoute(route) {
         const path = route.path
-        if (!path.includes(':') && !path.includes('*') && path !== '/') {
+        if (/*! path.includes(':')  && */!path.includes('*') && path !== '/') {
           additionalManifestEntries.push({
             url: path.startsWith('/') ? path.substring(1) : path,
             revision: `${getOrBuildHash()}`,
           })
         }
-
+        console.log(route)
         return route
       },
       extensions: ['vue', 'md'],
@@ -108,7 +113,11 @@ export default defineConfig({
     // https://github.com/antfu/vite-plugin-pwa
     VitePWA({
       registerType: 'autoUpdate',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       includeAssets: ['favicon.svg', 'robots.txt', 'safari-pinned-tab.svg'],
+      mode: 'development',
       manifest: {
         name: 'Vitesse',
         short_name: 'Vitesse',
@@ -135,6 +144,9 @@ export default defineConfig({
       workbox: {
         additionalManifestEntries,
       },
+      injectManifest: {
+        additionalManifestEntries,
+      },
     }),
 
     // https://github.com/intlify/vite-plugin-vue-i18n
@@ -154,7 +166,13 @@ export default defineConfig({
   // https://github.com/antfu/vite-ssg
   ssgOptions: {
     script: 'async',
-    formatting: 'minify',
+    formatting: 'prettify',
+    includedRoutes(routes) {
+      return routes.filter(r => !r.includes('*')).map((r) => {
+        console.log(r)
+        return r.replace(/:/g, '_')
+      })
+    },
   },
 
   optimizeDeps: {

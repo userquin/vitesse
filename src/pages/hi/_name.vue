@@ -1,10 +1,24 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useTitle } from '@vueuse/core'
+import { useHead } from '@vueuse/head'
 
 const props = defineProps<{ name: string }>()
 const router = useRouter()
 const { t } = useI18n()
+const title = useTitle()
+
+useHead({
+  title: `Hi ${props.name}`,
+  meta: [
+    { name: 'og:title', description: `Hi ${props.name}` },
+  ],
+})
+
+watch(() => props.name, (name) => {
+  title.value = `Hi ${name || ''}`
+}, { immediate: true })
 </script>
 
 <template>

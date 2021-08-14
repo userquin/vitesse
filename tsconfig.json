@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "module": "ESNext",
     "target": "es2016",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["DOM", "ESNext", "WebWorker"],
     "strict": true,
     "esModuleInterop": true,
     "incremental": false,
@@ -16,6 +16,8 @@
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
+      "vite-plugin-pwa",
+      "vite-plugin-pwa/client",
       "vite-plugin-vue-layouts/client"
     ],
     "paths": {

@@ -4,7 +4,8 @@
     "dev": "vite --port 3333 --open",
     "build": "cross-env NODE_ENV=production vite-ssg build",
     "preview": "vite preview",
-    "preview-https": "serve dist"
+    "preview-https": "serve dist",
+    "serve": "cross-env NODE_ENV=production node server.js dist"
   },
   "dependencies": {
     "@vueuse/core": "^5.2.0",
